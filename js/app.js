@@ -43,7 +43,7 @@ let particleConfig = {
       },
       "line_linked": {
         "enable": true, // Enable lines between particles
-        "distance": 380, // Maximum distance for lines to be drawn
+        "distance": 190, // Maximum distance for lines to be drawn
         "color": "#FFD700", // Color of lines (warm golden)
         "opacity": 0.4, // Opacity of lines
         "width": 2 // Width of lines
