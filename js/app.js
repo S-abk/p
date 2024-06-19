@@ -64,7 +64,7 @@ particlesJS("particles-js", {
       "detect_on": "canvas", // Interactivity detected on canvas
       "events": {
         "onhover": {
-          "enable": true, // Enable interaction on hover
+          "enable": false, // Enable interaction on hover
           "mode": "repulse" // Repulse particles from cursor
         },
         "onclick": {
@@ -75,9 +75,9 @@ particlesJS("particles-js", {
       },
       "modes": {
         "grab": {
-          "distance": 140, // Distance for grab effect
+          "distance": 380, // Distance for grab effect
           "line_linked": {
-            "opacity": 1 // Opacity of lines when particles are grabbed
+            "opacity": 2 // Opacity of lines when particles are grabbed
           }
         },
         "bubble": {
