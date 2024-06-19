@@ -33,9 +33,9 @@ particlesJS("particles-js", {
       },
       "size": {
         "value": 4, // Base size of particles
-        "random": true, // Randomize size
+        "random": false, // Randomize size
         "anim": {
-          "enable": true, // Enable size animation
+          "enable": false, // Enable size animation
           "speed": 3, // Speed of size animation
           "size_min": 0.1, // Minimum size value during animation
           "sync": false // Do not synchronize size animation
@@ -43,7 +43,7 @@ particlesJS("particles-js", {
       },
       "line_linked": {
         "enable": true, // Enable lines between particles
-        "distance": 1900, // Maximum distance for lines to be drawn
+        "distance": 256, // Maximum distance for lines to be drawn
         "color": "#FFD700", // Color of lines (warm golden)
         "opacity": 0.4, // Opacity of lines
         "width": 2 // Width of lines
