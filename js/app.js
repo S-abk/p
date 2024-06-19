@@ -2,7 +2,7 @@
 particlesJS("particles-js", {
     "particles": {
       "number": {
-        "value": 80, // Adjusted number for visibility
+        "value": 160, // Adjusted number for visibility
         "density": {
           "enable": true, // Enable density to control particle spread
           "value_area": 800 // Area over which particles are spread
@@ -18,7 +18,7 @@ particlesJS("particles-js", {
           "color": "#000000" // Color of the border if width > 0
         },
         "polygon": {
-          "nb_sides": 6 // Number of sides for the polygon shape
+          "nb_sides": 8 // Number of sides for the polygon shape
         }
       },
       "opacity": {
@@ -32,7 +32,7 @@ particlesJS("particles-js", {
         }
       },
       "size": {
-        "value": 3, // Base size of particles
+        "value": 4, // Base size of particles
         "random": true, // Randomize size
         "anim": {
           "enable": true, // Enable size animation
@@ -43,7 +43,7 @@ particlesJS("particles-js", {
       },
       "line_linked": {
         "enable": true, // Enable lines between particles
-        "distance": 380, // Maximum distance for lines to be drawn
+        "distance": 190, // Maximum distance for lines to be drawn
         "color": "#FFD700", // Color of lines (warm golden)
         "opacity": 0.4, // Opacity of lines
         "width": 2 // Width of lines
@@ -55,7 +55,7 @@ particlesJS("particles-js", {
         "random": true, // Randomize movement direction
         "straight": false, // Particles do not move in straight lines
         "out_mode": "out", // Particles disappear when they reach the edge
-        "bounce": false, // Particles do not bounce off edges
+        "bounce": true, // Particles bounce off edges
         "attract": {
           "enable": false, // Disable attraction effect
           "rotateX": 600,
