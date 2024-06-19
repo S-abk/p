@@ -1,5 +1,5 @@
 // Initialize particles.js with the given configuration
-particlesJS("particles-js", {
+let particleConfig = {
     "particles": {
       "number": {
         "value": 80, // Adjusted number for visibility
@@ -19,11 +19,6 @@ particlesJS("particles-js", {
         },
         "polygon": {
           "nb_sides": 6 // Number of sides for the polygon shape
-        },
-        "image": {
-          "src": "", // Path to image if particles are images
-          "width": 100,
-          "height": 100
         }
       },
       "opacity": {
@@ -112,7 +107,10 @@ particlesJS("particles-js", {
       }
     },
     "retina_detect": true // Enable retina display support
-  });
+  };
+  
+  // Initialize particles.js with the configuration
+  particlesJS("particles-js", particleConfig);
   
   // Add event listener for 'F' key to toggle fullscreen
   document.addEventListener('keydown', function(event) {
@@ -142,3 +140,23 @@ particlesJS("particles-js", {
       }
     }
   });
+  
+  // Update particle configuration based on slider input
+  document.getElementById('particleNumber').addEventListener('input', function(event) {
+    let value = event.target.value;
+    particleConfig.particles.number.value = value;
+    particlesJS("particles-js", particleConfig);
+  });
+  
+  document.getElementById('particleSpeed').addEventListener('input', function(event) {
+    let value = event.target.value;
+    particleConfig.particles.move.speed = value;
+    particlesJS("particles-js", particleConfig);
+  });
+  
+  document.getElementById('lineDistance').addEventListener('input', function(event) {
+    let value = event.target.value;
+    particleConfig.particles.line_linked.distance = value;
+    particlesJS("particles-js", particleConfig);
+  });
+  
