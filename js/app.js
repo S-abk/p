@@ -2,7 +2,7 @@
 particlesJS("particles-js", {
     "particles": {
       "number": {
-        "value": 160, // Adjusted number for visibility
+        "value": 16, // Adjusted number for visibility
         "density": {
           "enable": true, // Enable density to control particle spread
           "value_area": 800 // Area over which particles are spread
@@ -12,13 +12,13 @@ particlesJS("particles-js", {
         "value": "#FFA500" // Single warm color for simplicity
       },
       "shape": {
-        "type": ["circle", "polygon", "triangle"], // Include polygon shapes
+        "type": "circle", // Include polygon shapes
         "stroke": {
           "width": 0, // No border around particles
           "color": "#000000" // Color of the border if width > 0
         },
         "polygon": {
-          "nb_sides": 3 // Number of sides for the polygon shape
+          "nb_sides": 4 // Number of sides for the polygon shape
         }
       },
       "opacity": {
@@ -43,7 +43,7 @@ particlesJS("particles-js", {
       },
       "line_linked": {
         "enable": true, // Enable lines between particles
-        "distance": 190, // Maximum distance for lines to be drawn
+        "distance": 1900, // Maximum distance for lines to be drawn
         "color": "#FFD700", // Color of lines (warm golden)
         "opacity": 0.4, // Opacity of lines
         "width": 2 // Width of lines
