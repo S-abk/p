@@ -1,9 +1,2 @@
 # p
-Particle.js background
-
-<br/><br/>
-
-<!-- <link href="https://s-abk.github.io/p/" >link</link> -->
-
-[link]:(https://s-abk.github.io/p/)
-
+Particle.js background, press "f" to go fullscreen; here's the [link]:(https://s-abk.github.io/p/)
