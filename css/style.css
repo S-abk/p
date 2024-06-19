@@ -24,88 +24,9 @@ canvas {
   background-color: #000000; /* Solid deep black background */
 }
 
-/* ---- dropdown menu ---- */
+/* ---- audio controls ---- */
 
-.dropdown {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 1000;
-}
-
-.dropbtn {
-  background-color: #333;
-  color: white;
-  padding: 10px;
-  font-size: 16px;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
-}
-
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: #444;
-  min-width: 200px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
-  border-radius: 5px;
-}
-
-.dropdown-content label {
-  color: #FFF;
-  padding: 8px;
-  display: block;
-  text-align: left;
-}
-
-.dropdown-content input[type=range] {
-  width: 100%;
-  margin: 8px 0;
-}
-
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-
-.dropbtn:hover, .dropbtn:focus {
-  background-color: #555;
-}
-
-/* ---- stats.js ---- */
-
-/* Styling for the particle count display */
-.count-particles {
-  background: #262626; /* Dark gray background */
-  position: absolute;
-  top: 48px; /* Position it below the top */
-  left: 0; /* Align it to the left */
-  width: 80px; /* Set a fixed width */
-  color: #FFA500; /* Warm amber text color */
-  font-size: .8em; /* Small font size */
-  text-align: left; /* Align text to the left */
-  text-indent: 4px; /* Indent text */
-  line-height: 14px; /* Line height for readability */
-  padding-bottom: 2px; /* Padding at the bottom */
-  font-family: Helvetica, Arial, sans-serif; /* Font style */
-  font-weight: bold; /* Bold text */
-  border-radius: 0 0 3px 3px; /* Rounded corners at the bottom */
-}
-
-/* Larger font size for the particle count number */
-.js-count-particles {
-  font-size: 1.1em;
-}
-
-/* Prevent text selection for stats and particle count */
-#stats,
-.count-particles {
-  -webkit-user-select: none;
-}
-
-/* Styling for the stats container */
-#stats {
-  border-radius: 3px 3px 0 0; /* Rounded corners at the top */
-  overflow: hidden; /* Hide overflow */
+/* Optional: style the audio controls */
+audio {
+  display: none; /* Hide audio controls */
 }

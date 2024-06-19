@@ -1,8 +1,8 @@
 // Initialize particles.js with the given configuration
-let particleConfig = {
+particlesJS("particles-js", {
     "particles": {
       "number": {
-        "value": 160, // Adjusted number for visibility
+        "value": 80, // Adjusted number for visibility
         "density": {
           "enable": true, // Enable density to control particle spread
           "value_area": 800 // Area over which particles are spread
@@ -18,7 +18,7 @@ let particleConfig = {
           "color": "#000000" // Color of the border if width > 0
         },
         "polygon": {
-          "nb_sides": 16 // Number of sides for the polygon shape
+          "nb_sides": 6 // Number of sides for the polygon shape
         }
       },
       "opacity": {
@@ -43,7 +43,7 @@ let particleConfig = {
       },
       "line_linked": {
         "enable": true, // Enable lines between particles
-        "distance": 190, // Maximum distance for lines to be drawn
+        "distance": 380, // Maximum distance for lines to be drawn
         "color": "#FFD700", // Color of lines (warm golden)
         "opacity": 0.4, // Opacity of lines
         "width": 2 // Width of lines
@@ -67,7 +67,7 @@ let particleConfig = {
       "detect_on": "canvas", // Interactivity detected on canvas
       "events": {
         "onhover": {
-          "enable": false, // Enable interaction on hover
+          "enable": false, // Disable interaction on hover
           "mode": "repulse" // Repulse particles from cursor
         },
         "onclick": {
@@ -107,10 +107,7 @@ let particleConfig = {
       }
     },
     "retina_detect": true // Enable retina display support
-  };
-  
-  // Initialize particles.js with the configuration
-  particlesJS("particles-js", particleConfig);
+  });
   
   // Add event listener for 'F' key to toggle fullscreen
   document.addEventListener('keydown', function(event) {
@@ -139,24 +136,5 @@ let particleConfig = {
         }
       }
     }
-  });
-  
-  // Update particle configuration based on slider input
-  document.getElementById('particleNumber').addEventListener('input', function(event) {
-    let value = event.target.value;
-    particleConfig.particles.number.value = value;
-    particlesJS("particles-js", particleConfig);
-  });
-  
-  document.getElementById('particleSpeed').addEventListener('input', function(event) {
-    let value = event.target.value;
-    particleConfig.particles.move.speed = value;
-    particlesJS("particles-js", particleConfig);
-  });
-  
-  document.getElementById('lineDistance').addEventListener('input', function(event) {
-    let value = event.target.value;
-    particleConfig.particles.line_linked.distance = value;
-    particlesJS("particles-js", particleConfig);
   });
   
