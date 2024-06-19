@@ -16,29 +16,12 @@ canvas {
 
 /* ---- particles.js container ---- */
 
-/* Full screen particle container with a gradient background */
+/* Full screen particle container with a solid black background */
 #particles-js {
   position: absolute;
   width: 100%;
   height: 100%;
-  background: linear-gradient(120deg, #2a2a2a, #1a1a1a); /* Very dark gradient background */
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
-  animation: backgroundAnimation 10s infinite alternate; /* Add animation for background color change */
-}
-
-/* Background animation keyframes */
-@keyframes backgroundAnimation {
-  0% {
-    background: linear-gradient(120deg, #2a2a2a, #1a1a1a); /* Very dark gradient start */
-  }
-  50% {
-    background: linear-gradient(120deg, #1a1a1a, #0d0d0d); /* Darker tones in the middle */
-  }
-  100% {
-    background: linear-gradient(120deg, #2a2a2a, #1a1a1a); /* Very dark gradient end */
-  }
+  background-color: #000000; /* Solid deep black background */
 }
 
 /* ---- stats.js ---- */

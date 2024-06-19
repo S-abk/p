@@ -2,28 +2,20 @@
 particlesJS("particles-js", {
   "particles": {
     "number": {
-      "value": 150, // Number of particles
+      "value": 80, // Adjusted number for visibility
       "density": {
         "enable": true, // Enable density to control particle spread
         "value_area": 800 // Area over which particles are spread
       }
     },
     "color": {
-      "value": ["#FFA500", "#FFD700", "#FF8C00"] // Array of warm colors for particles
+      "value": "#FFA500" // Single warm color for simplicity
     },
     "shape": {
-      "type": ["circle", "edge", "triangle"], // Shapes used for particles
+      "type": "circle", // Single shape for simplicity
       "stroke": {
         "width": 0, // No border around particles
         "color": "#000000" // Color of the border if width > 0
-      },
-      "polygon": {
-        "nb_sides": 5 // Number of sides if shape is polygon
-      },
-      "image": {
-        "src": "", // Path to image if particles are images
-        "width": 100,
-        "height": 100
       }
     },
     "opacity": {
@@ -31,31 +23,31 @@ particlesJS("particles-js", {
       "random": true, // Randomize opacity
       "anim": {
         "enable": true, // Enable opacity animation
-        "speed": 0.5, // Speed of opacity animation
+        "speed": 1, // Speed of opacity animation
         "opacity_min": 0.1, // Minimum opacity value during animation
         "sync": false // Do not synchronize opacity animation
       }
     },
     "size": {
-      "value": 4, // Base size of particles
+      "value": 3, // Base size of particles
       "random": true, // Randomize size
       "anim": {
         "enable": true, // Enable size animation
-        "speed": 2, // Speed of size animation
-        "size_min": 0.3, // Minimum size value during animation
+        "speed": 3, // Speed of size animation
+        "size_min": 0.1, // Minimum size value during animation
         "sync": false // Do not synchronize size animation
       }
     },
     "line_linked": {
       "enable": true, // Enable lines between particles
-      "distance": 120, // Maximum distance for lines to be drawn
+      "distance": 150, // Maximum distance for lines to be drawn
       "color": "#FFD700", // Color of lines (warm golden)
-      "opacity": 0.3, // Opacity of lines
+      "opacity": 0.4, // Opacity of lines
       "width": 1 // Width of lines
     },
     "move": {
       "enable": true, // Enable particle movement
-      "speed": 1, // Speed of particle movement
+      "speed": 2, // Speed of particle movement
       "direction": "none", // Random direction
       "random": true, // Randomize movement direction
       "straight": false, // Particles do not move in straight lines
@@ -65,11 +57,6 @@ particlesJS("particles-js", {
         "enable": false, // Disable attraction effect
         "rotateX": 600,
         "rotateY": 1200
-      },
-      "trail": {
-        "enable": true, // Enable trail effect
-        "length": 10, // Length of the trail
-        "fillColor": "#FFA500" // Color of the trail (warm amber)
       }
     }
   },
@@ -78,11 +65,11 @@ particlesJS("particles-js", {
     "events": {
       "onhover": {
         "enable": true, // Enable interaction on hover
-        "mode": "attract" // Attract particles to cursor
+        "mode": "repulse" // Repulse particles from cursor
       },
       "onclick": {
         "enable": true, // Enable interaction on click
-        "mode": ["push", "repulse"] // Push and repulse particles on click
+        "mode": "push" // Push particles on click
       },
       "resize": true // Adjust particles on window resize
     },
