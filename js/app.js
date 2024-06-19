@@ -29,11 +29,11 @@ particlesJS("particles-js", {
         }
       },
       "size": {
-        "value": 4, // Base size of particles
+        "value": 3, // Base size of particles
         "random": true, // Randomize size
         "anim": {
           "enable": true, // Enable size animation
-          "speed": 4, // Speed of size animation
+          "speed": 3, // Speed of size animation
           "size_min": 0.1, // Minimum size value during animation
           "sync": false // Do not synchronize size animation
         }
@@ -43,7 +43,7 @@ particlesJS("particles-js", {
         "distance": 150, // Maximum distance for lines to be drawn
         "color": "#FFD700", // Color of lines (warm golden)
         "opacity": 0.4, // Opacity of lines
-        "width": 2 // Width of lines
+        "width": 1 // Width of lines
       },
       "move": {
         "enable": true, // Enable particle movement
@@ -104,5 +104,34 @@ particlesJS("particles-js", {
       }
     },
     "retina_detect": true // Enable retina display support
+  });
+  
+  // Add event listener for 'F' key to toggle fullscreen
+  document.addEventListener('keydown', function(event) {
+    if (event.key === "f" || event.key === "F") {
+      if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
+        // Enter fullscreen mode
+        if (document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen();
+        } else if (document.documentElement.webkitRequestFullscreen) {
+          document.documentElement.webkitRequestFullscreen();
+        } else if (document.documentElement.mozRequestFullScreen) {
+          document.documentElement.mozRequestFullScreen();
+        } else if (document.documentElement.msRequestFullscreen) {
+          document.documentElement.msRequestFullscreen();
+        }
+      } else {
+        // Exit fullscreen mode
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+        }
+      }
+    }
   });
   
