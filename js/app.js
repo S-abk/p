@@ -40,14 +40,14 @@ particlesJS("particles-js", {
       },
       "line_linked": {
         "enable": true, // Enable lines between particles
-        "distance": 150, // Maximum distance for lines to be drawn
+        "distance": 380, // Maximum distance for lines to be drawn
         "color": "#FFD700", // Color of lines (warm golden)
         "opacity": 0.4, // Opacity of lines
-        "width": 1 // Width of lines
+        "width": 2 // Width of lines
       },
       "move": {
         "enable": true, // Enable particle movement
-        "speed": 2, // Speed of particle movement
+        "speed": 4, // Speed of particle movement
         "direction": "none", // Random direction
         "random": true, // Randomize movement direction
         "straight": false, // Particles do not move in straight lines
