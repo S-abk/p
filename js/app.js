@@ -12,10 +12,18 @@ particlesJS("particles-js", {
         "value": "#FFA500" // Single warm color for simplicity
       },
       "shape": {
-        "type": "circle", // Single shape for simplicity
+        "type": ["circle", "polygon", "triangle"], // Include polygon shapes
         "stroke": {
           "width": 0, // No border around particles
           "color": "#000000" // Color of the border if width > 0
+        },
+        "polygon": {
+          "nb_sides": 6 // Number of sides for the polygon shape
+        },
+        "image": {
+          "src": "", // Path to image if particles are images
+          "width": 100,
+          "height": 100
         }
       },
       "opacity": {
@@ -134,4 +142,3 @@ particlesJS("particles-js", {
       }
     }
   });
-  
