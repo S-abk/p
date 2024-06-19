@@ -2,7 +2,7 @@
 particlesJS("particles-js", {
     "particles": {
       "number": {
-        "value": 80, // Adjusted number for visibility
+        "value": 800, // Adjusted number for visibility
         "density": {
           "enable": true, // Enable density to control particle spread
           "value_area": 800 // Area over which particles are spread
