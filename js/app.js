@@ -18,7 +18,7 @@ let particleConfig = {
           "color": "#000000" // Color of the border if width > 0
         },
         "polygon": {
-          "nb_sides": 3 // Number of sides for the polygon shape
+          "nb_sides": 4 // Number of sides for the polygon shape
         }
       },
       "opacity": {
