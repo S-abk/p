@@ -50,9 +50,9 @@ particlesJS("particles-js", {
       },
       "move": {
         "enable": true, // Enable particle movement
-        "speed": 4, // Speed of particle movement
+        "speed": 5, // Speed of particle movement
         "direction": "none", // Random direction
-        "random": true, // Randomize movement direction
+        "random": false, // Randomize movement direction
         "straight": false, // Particles do not move in straight lines
         "out_mode": "out", // Particles disappear when they reach the edge
         "bounce": true, // Particles bounce off edges
