@@ -94,6 +94,7 @@ class Worm {
 
   // Draw worm
   draw(ctx) {
+    console.log("Drawing worm at segments:", this.segments); // Debugging log
     ctx.fillStyle = 'red'; // Red color for the worm
     for (let segment of this.segments) {
       ctx.fillRect(segment.x, segment.y, 10, 10); // Size of worm segments
