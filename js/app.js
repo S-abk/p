@@ -157,17 +157,21 @@ function animate() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   // Update and draw particles
-  pJS.fn.particlesDraw();
+  if (window.pJSDom && window.pJSDom[0] && window.pJSDom[0].pJS) {
+    window.pJSDom[0].pJS.fn.particlesDraw();
+  }
 
   // Update and draw worm
   worm.update();
   worm.draw(ctx);
 
   // Move worm towards nearest particle
-  worm.moveToNearestParticle(pJS.particles.array);
+  if (window.pJSDom && window.pJSDom[0] && window.pJSDom[0].pJS && window.pJSDom[0].pJS.particles) {
+    worm.moveToNearestParticle(window.pJSDom[0].pJS.particles.array);
+  }
 
   // Check for collisions with particles
-  let particlesArray = pJS.particles.array;
+  let particlesArray = window.pJSDom[0].pJS.particles.array;
   for (let i = particlesArray.length - 1; i >= 0; i--) {
     let particle = particlesArray[i];
     let dx = worm.segments[0].x - particle.x;
