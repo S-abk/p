@@ -698,23 +698,22 @@ pJS.fn.interact.linkParticles = function(p1, p2) {
       pJS.canvas.ctx.lineWidth = thickness;
       //pJS.canvas.ctx.lineCap = 'round'; /* performance issue */
 
+      /* Dynamic control points for cubic Bezier curve */
+      var cp1x = p1.x + (dx / 3) + (Math.random() - 0.5) * 20;
+      var cp1y = p1.y + (dy / 3) + (Math.random() - 0.5) * 20;
+      var cp2x = p1.x + (2 * dx / 3) + (Math.random() - 0.5) * 20;
+      var cp2y = p1.y + (2 * dy / 3) + (Math.random() - 0.5) * 20;
+
       /* path */
       pJS.canvas.ctx.beginPath();
       pJS.canvas.ctx.moveTo(p1.x, p1.y);
-      
-      /* Control point calculation for quadratic Bezier curve */
-      var controlX = (p1.x + p2.x) / 2 + (dy / 2);
-      var controlY = (p1.y + p2.y) / 2 - (dx / 2);
-      
-      pJS.canvas.ctx.quadraticCurveTo(controlX, controlY, p2.x, p2.y);
+      pJS.canvas.ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, p2.x, p2.y);
       pJS.canvas.ctx.stroke();
       pJS.canvas.ctx.closePath();
-
     }
-
   }
-
 };
+
 
 
 
