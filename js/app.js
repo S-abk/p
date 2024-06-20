@@ -1,5 +1,5 @@
 // Initialize particles.js with the given configuration for particles
-let particleConfig = {
+particlesJS("particles-js", {
   "particles": {
     "number": {
       "value": 160, // Adjusted number for visibility
@@ -72,13 +72,10 @@ let particleConfig = {
     }
   },
   "retina_detect": true // Enable retina display support
-};
-
-// Initialize particles.js with the configuration for particles
-particlesJS("particles-js", particleConfig);
+});
 
 // Initialize particles.js with the given configuration for worms
-let wormsConfig = {
+particlesJS("worms-js", {
   "particles": {
     "number": {
       "value": 10, // Number of worms
@@ -154,7 +151,4 @@ let wormsConfig = {
     }
   },
   "retina_detect": true
-};
-
-// Initialize particles.js with the configuration for worms
-particlesJS("worms-js", wormsConfig);
+});
