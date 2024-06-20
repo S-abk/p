@@ -79,17 +79,28 @@ class Worm {
   constructor() {
     this.segments = [{x: 100, y: 100}]; // Initial position
     this.direction = {x: 1, y: 0}; // Initial direction
-    this.speed = 2; // Worm speed
+    this.speed = 4; // Worm speed, increased for visibility
+    this.size = 20; // Size of worm segments, increased for visibility
   }
 
   // Update worm position
   update() {
     // Move worm head
-    let head = {x: this.segments[0].x + this.direction.x * this.speed, y: this.segments[0].y + this.direction.y * this.speed};
+    let head = {
+      x: this.segments[0].x + this.direction.x * this.speed,
+      y: this.segments[0].y + this.direction.y * this.speed
+    };
+
+    // Ensure the worm stays within the canvas
+    head.x = (head.x + canvas.width) % canvas.width;
+    head.y = (head.y + canvas.height) % canvas.height;
+
     this.segments.unshift(head);
 
-    // Remove tail segment
-    this.segments.pop();
+    // Remove tail segment if the worm is too long
+    if (this.segments.length > 20) {
+      this.segments.pop();
+    }
   }
 
   // Draw worm
@@ -97,7 +108,7 @@ class Worm {
     console.log("Drawing worm at segments:", this.segments); // Debugging log
     ctx.fillStyle = 'red'; // Red color for the worm
     for (let segment of this.segments) {
-      ctx.fillRect(segment.x, segment.y, 10, 10); // Size of worm segments
+      ctx.fillRect(segment.x, segment.y, this.size, this.size); // Size of worm segments
     }
   }
 
@@ -178,7 +189,7 @@ function animate() {
     let dy = worm.segments[0].y - particle.y;
     let dist = Math.sqrt(dx * dx + dy * dy);
 
-    if (dist < 10) { // Collision detected
+    if (dist < worm.size / 2) { // Collision detected
       particlesArray.splice(i, 1); // Remove particle
       worm.grow(); // Grow worm
     }
