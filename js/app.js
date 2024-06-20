@@ -1,140 +1,185 @@
 // Initialize particles.js with the given configuration
-particlesJS("particles-js", {
-    "particles": {
-      "number": {
-        "value": 20, // Adjusted number for visibility
-        "density": {
-          "enable": true, // Enable density to control particle spread
-          "value_area": 800 // Area over which particles are spread
-        }
-      },
-      "color": {
-        "value": "#FFA500" // Single warm color for simplicity
-      },
-      "shape": {
-        "type": "circle", // Include polygon shapes
-        "stroke": {
-          "width": 0, // No border around particles
-          "color": "#000000" // Color of the border if width > 0
-        },
-        "polygon": {
-          "nb_sides": 8 // Number of sides for the polygon shape
-        }
-      },
-      "opacity": {
-        "value": 0.6, // Base opacity of particles
-        "random": true, // Randomize opacity
-        "anim": {
-          "enable": true, // Enable opacity animation
-          "speed": 1, // Speed of opacity animation
-          "opacity_min": 0.1, // Minimum opacity value during animation
-          "sync": false // Do not synchronize opacity animation
-        }
-      },
-      "size": {
-        "value": 4, // Base size of particles
-        "random": false, // Randomize size
-        "anim": {
-          "enable": true, // Enable size animation
-          "speed": 3, // Speed of size animation
-          "size_min": 0.1, // Minimum size value during animation
-          "sync": false // Do not synchronize size animation
-        }
-      },
-      "line_linked": {
-        "enable": true, // Enable lines between particles
-        "distance": 800, // Maximum distance for lines to be drawn
-        "color": "#FFD700", // Color of lines (warm golden)
-        "opacity": 0.4, // Opacity of lines
-        "width": 2 // Width of lines
-      },
-      "move": {
-        "enable": true, // Enable particle movement
-        "speed": 5, // Speed of particle movement
-        "direction": "none", // Random direction
-        "random": false, // Randomize movement direction
-        "straight": false, // Particles do not move in straight lines
-        "out_mode": "out", // Particles disappear when they reach the edge
-        "bounce": true, // Particles bounce off edges
-        "attract": {
-          "enable": false, // Disable attraction effect
-          "rotateX": 600,
-          "rotateY": 1200
-        }
+let particleConfig = {
+  "particles": {
+    "number": {
+      "value": 160, // Adjusted number for visibility
+      "density": {
+        "enable": true, // Enable density to control particle spread
+        "value_area": 800 // Area over which particles are spread
       }
     },
-    "interactivity": {
-      "detect_on": "canvas", // Interactivity detected on canvas
-      "events": {
-        "onhover": {
-          "enable": false, // Disable interaction on hover
-          "mode": "repulse" // Repulse particles from cursor
-        },
-        "onclick": {
-          "enable": true, // Enable interaction on click
-          "mode": "push" // Push particles on click
-        },
-        "resize": true // Adjust particles on window resize
+    "color": {
+      "value": "#FFA500" // Single warm color for simplicity
+    },
+    "shape": {
+      "type": ["circle", "polygon", "triangle"], // Include polygon shapes
+      "stroke": {
+        "width": 0, // No border around particles
+        "color": "#000000" // Color of the border if width > 0
       },
-      "modes": {
-        "grab": {
-          "distance": 380, // Distance for grab effect
-          "line_linked": {
-            "opacity": 2 // Opacity of lines when particles are grabbed
-          }
-        },
-        "bubble": {
-          "distance": 400, // Distance for bubble effect
-          "size": 40, // Size of bubbles
-          "duration": 2, // Duration of bubble effect
-          "opacity": 8, // Opacity of bubbles
-          "speed": 2 // Speed of bubble effect
-        },
-        "repulse": {
-          "distance": 200, // Distance for repulse effect
-          "duration": 0.4 // Duration of repulse effect
-        },
-        "push": {
-          "particles_nb": 4 // Number of particles added on click
-        },
-        "remove": {
-          "particles_nb": 2 // Number of particles removed on click
-        },
-        "attract": {
-          "distance": 200, // Distance for attract effect
-          "duration": 0.4 // Duration of attract effect
-        }
+      "polygon": {
+        "nb_sides": 16 // Number of sides for the polygon shape
       }
     },
-    "retina_detect": true // Enable retina display support
-  });
-  
-  // Add event listener for 'F' key to toggle fullscreen
-  document.addEventListener('keydown', function(event) {
-    if (event.key === "f" || event.key === "F") {
-      if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
-        // Enter fullscreen mode
-        if (document.documentElement.requestFullscreen) {
-          document.documentElement.requestFullscreen();
-        } else if (document.documentElement.webkitRequestFullscreen) {
-          document.documentElement.webkitRequestFullscreen();
-        } else if (document.documentElement.mozRequestFullScreen) {
-          document.documentElement.mozRequestFullScreen();
-        } else if (document.documentElement.msRequestFullscreen) {
-          document.documentElement.msRequestFullscreen();
-        }
-      } else {
-        // Exit fullscreen mode
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        } else if (document.webkitExitFullscreen) {
-          document.webkitExitFullscreen();
-        } else if (document.mozCancelFullScreen) {
-          document.mozCancelFullScreen();
-        } else if (document.msExitFullscreen) {
-          document.msExitFullscreen();
-        }
+    "opacity": {
+      "value": 0.6, // Base opacity of particles
+      "random": true, // Randomize opacity
+      "anim": {
+        "enable": true, // Enable opacity animation
+        "speed": 1, // Speed of opacity animation
+        "opacity_min": 0.1, // Minimum opacity value during animation
+        "sync": false // Do not synchronize opacity animation
+      }
+    },
+    "size": {
+      "value": 3, // Base size of particles
+      "random": true, // Randomize size
+      "anim": {
+        "enable": true, // Enable size animation
+        "speed": 3, // Speed of size animation
+        "size_min": 0.1, // Minimum size value during animation
+        "sync": false // Do not synchronize size animation
+      }
+    },
+    "line_linked": {
+      "enable": false, // Disable lines between particles for this effect
+    },
+    "move": {
+      "enable": true, // Enable particle movement
+      "speed": 1, // Speed of particle movement
+      "direction": "none", // Random direction
+      "random": true, // Randomize movement direction
+      "straight": false, // Particles do not move in straight lines
+      "out_mode": "out", // Particles disappear when they reach the edge
+      "bounce": false, // Particles do not bounce off edges
+      "attract": {
+        "enable": false, // Disable attraction effect
+        "rotateX": 600,
+        "rotateY": 1200
       }
     }
-  });
-  
+  },
+  "interactivity": {
+    "detect_on": "canvas", // Interactivity detected on canvas
+    "events": {
+      "onhover": {
+        "enable": false, // Disable interaction on hover
+      },
+      "onclick": {
+        "enable": false, // Disable interaction on click
+      },
+      "resize": true // Adjust particles on window resize
+    }
+  },
+  "retina_detect": true // Enable retina display support
+};
+
+// Initialize particles.js with the configuration
+particlesJS("particles-js", particleConfig);
+
+// Create snake object
+class Snake {
+  constructor() {
+    this.segments = [{x: 100, y: 100}]; // Initial position
+    this.direction = {x: 1, y: 0}; // Initial direction
+    this.speed = 2; // Snake speed
+  }
+
+  // Update snake position
+  update() {
+    // Move snake head
+    let head = {x: this.segments[0].x + this.direction.x * this.speed, y: this.segments[0].y + this.direction.y * this.speed};
+    this.segments.unshift(head);
+
+    // Remove tail segment
+    this.segments.pop();
+  }
+
+  // Draw snake
+  draw(ctx) {
+    ctx.fillStyle = 'lime';
+    for (let segment of this.segments) {
+      ctx.fillRect(segment.x, segment.y, 10, 10);
+    }
+  }
+
+  // Change direction
+  changeDirection(newDirection) {
+    this.direction = newDirection;
+  }
+
+  // Grow snake
+  grow() {
+    let tail = this.segments[this.segments.length - 1];
+    this.segments.push({x: tail.x, y: tail.y});
+  }
+
+  // Move towards the nearest particle
+  moveToNearestParticle(particles) {
+    if (particles.length === 0) return;
+
+    let head = this.segments[0];
+    let nearestParticle = particles[0];
+    let minDist = Math.sqrt((head.x - nearestParticle.x) ** 2 + (head.y - nearestParticle.y) ** 2);
+
+    for (let particle of particles) {
+      let dist = Math.sqrt((head.x - particle.x) ** 2 + (head.y - particle.y) ** 2);
+      if (dist < minDist) {
+        minDist = dist;
+        nearestParticle = particle;
+      }
+    }
+
+    let dx = nearestParticle.x - head.x;
+    let dy = nearestParticle.y - head.y;
+
+    if (Math.abs(dx) > Math.abs(dy)) {
+      this.direction = {x: dx > 0 ? 1 : -1, y: 0};
+    } else {
+      this.direction = {x: 0, y: dy > 0 ? 1 : -1};
+    }
+  }
+}
+
+// Initialize canvas and snake
+let canvas = document.createElement('canvas');
+document.body.appendChild(canvas);
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+let ctx = canvas.getContext('2d');
+
+let snake = new Snake();
+
+// Main animation loop
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Update and draw particles
+  pJS.fn.particlesDraw();
+
+  // Update and draw snake
+  snake.update();
+  snake.draw(ctx);
+
+  // Move snake towards nearest particle
+  snake.moveToNearestParticle(pJS.particles.array);
+
+  // Check for collisions with particles
+  let particlesArray = pJS.particles.array;
+  for (let i = particlesArray.length - 1; i >= 0; i--) {
+    let particle = particlesArray[i];
+    let dx = snake.segments[0].x - particle.x;
+    let dy = snake.segments[0].y - particle.y;
+    let dist = Math.sqrt(dx * dx + dy * dy);
+
+    if (dist < 10) { // Collision detected
+      particlesArray.splice(i, 1); // Remove particle
+      snake.grow(); // Grow snake
+    }
+  }
+
+  requestAnimationFrame(animate);
+}
+
+// Start the animation
+animate();

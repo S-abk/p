@@ -23,10 +23,3 @@ canvas {
   height: 100%;
   background-color: #000000; /* Solid deep black background */
 }
-
-/* ---- audio controls ---- */
-
-/* Optional: style the audio controls */
-audio {
-  display: none; /* Hide audio controls */
-}
