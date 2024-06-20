@@ -42,7 +42,7 @@ let particleConfig = {
       }
     },
     "line_linked": {
-      "enable": false, // Disable lines between particles for this effect
+      "enable": false, // Disable lines between particles
     },
     "move": {
       "enable": true, // Enable particle movement
