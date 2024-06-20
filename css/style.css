@@ -11,7 +11,7 @@ body {
 /* Ensure canvas takes full width and height of the screen */
 canvas {
   display: block;
-  /* vertical-align: bottom; */
+  vertical-align: bottom;
 }
 
 /* ---- particles.js container ---- */
