@@ -1,28 +1,10 @@
-/* ---- reset ---- */
-
-/* Reset body margin and set default font */
 body {
   margin: 0;
-  font: normal 75% Arial, Helvetica, sans-serif;
+  padding: 0;
+  overflow: hidden; /* Ensure no scrollbars */
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background-color: #0d0d0d; /* Dark background for less eye strain */
   color: #FFA500; /* Warm amber text color */
-}
-
-/* Ensure canvas takes full width and height of the screen */
-canvas {
-  display: block;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 10; /* Ensure canvas is on top */
-}
-
-/* ---- particles.js container ---- */
-
-#particles-js {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background-color: #000000; /* Solid deep black background */
-  z-index: 1; /* Ensure particles container is below canvas */
 }
