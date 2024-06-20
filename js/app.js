@@ -94,7 +94,7 @@ class Worm {
 
   // Draw worm
   draw(ctx) {
-    ctx.fillStyle = '#00FF00'; // Green worms
+    ctx.fillStyle = 'red'; // Red color for the worm
     for (let segment of this.segments) {
       ctx.fillRect(segment.x, segment.y, 10, 10); // Size of worm segments
     }
