@@ -146,6 +146,7 @@ let canvas = document.createElement('canvas');
 canvas.style.position = 'absolute';
 canvas.style.top = '0';
 canvas.style.left = '0';
+canvas.style.zIndex = '10'; // Ensure the canvas is on top
 document.body.appendChild(canvas);
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;

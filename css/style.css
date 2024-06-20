@@ -11,7 +11,10 @@ body {
 /* Ensure canvas takes full width and height of the screen */
 canvas {
   display: block;
-  vertical-align: bottom;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10; /* Ensure canvas is on top */
 }
 
 /* ---- particles.js container ---- */
@@ -22,4 +25,5 @@ canvas {
   width: 100%;
   height: 100%;
   background-color: #000000; /* Solid deep black background */
+  z-index: 1; /* Ensure particles container is below canvas */
 }
