@@ -97,7 +97,7 @@ class Snake {
 
   // Draw snake
   draw(ctx) {
-    ctx.fillStyle = 'lime';
+    ctx.fillStyle = 'red'; // Change the snake color here
     for (let segment of this.segments) {
       ctx.fillRect(segment.x, segment.y, 10, 10);
     }
