@@ -1,4 +1,4 @@
-// Initialize particles.js with the given configuration for particles
+// Initialize particles.js with the given configuration
 particlesJS("particles-js", {
   "particles": {
     "number": {
@@ -74,81 +74,113 @@ particlesJS("particles-js", {
   "retina_detect": true // Enable retina display support
 });
 
-// Initialize particles.js with the given configuration for worms
-particlesJS("worms-js", {
-  "particles": {
-    "number": {
-      "value": 10, // Number of worms
-      "density": {
-        "enable": true,
-        "value_area": 800
-      }
-    },
-    "color": {
-      "value": "#00FF00" // Green worms
-    },
-    "shape": {
-      "type": "circle",
-      "stroke": {
-        "width": 0,
-        "color": "#000000"
-      }
-    },
-    "opacity": {
-      "value": 1,
-      "random": false,
-      "anim": {
-        "enable": false
-      }
-    },
-    "size": {
-      "value": 10, // Size of the worms
-      "random": false,
-      "anim": {
-        "enable": false
-      }
-    },
-    "line_linked": {
-      "enable": true,
-      "distance": 50,
-      "color": "#00FF00",
-      "opacity": 1,
-      "width": 2
-    },
-    "move": {
-      "enable": true,
-      "speed": 2,
-      "direction": "none",
-      "random": false,
-      "straight": false,
-      "out_mode": "bounce",
-      "bounce": true,
-      "attract": {
-        "enable": true,
-        "rotateX": 600,
-        "rotateY": 1200
+// Create worm object
+class Worm {
+  constructor() {
+    this.segments = [{x: 100, y: 100}]; // Initial position
+    this.direction = {x: 1, y: 0}; // Initial direction
+    this.speed = 2; // Worm speed
+  }
+
+  // Update worm position
+  update() {
+    // Move worm head
+    let head = {x: this.segments[0].x + this.direction.x * this.speed, y: this.segments[0].y + this.direction.y * this.speed};
+    this.segments.unshift(head);
+
+    // Remove tail segment
+    this.segments.pop();
+  }
+
+  // Draw worm
+  draw(ctx) {
+    ctx.fillStyle = '#00FF00'; // Green worms
+    for (let segment of this.segments) {
+      ctx.fillRect(segment.x, segment.y, 10, 10); // Size of worm segments
+    }
+  }
+
+  // Change direction
+  changeDirection(newDirection) {
+    this.direction = newDirection;
+  }
+
+  // Grow worm
+  grow() {
+    let tail = this.segments[this.segments.length - 1];
+    this.segments.push({x: tail.x, y: tail.y});
+  }
+
+  // Move towards the nearest particle
+  moveToNearestParticle(particles) {
+    if (particles.length === 0) return;
+
+    let head = this.segments[0];
+    let nearestParticle = particles[0];
+    let minDist = Math.sqrt((head.x - nearestParticle.x) ** 2 + (head.y - nearestParticle.y) ** 2);
+
+    for (let particle of particles) {
+      let dist = Math.sqrt((head.x - particle.x) ** 2 + (head.y - particle.y) ** 2);
+      if (dist < minDist) {
+        minDist = dist;
+        nearestParticle = particle;
       }
     }
-  },
-  "interactivity": {
-    "detect_on": "canvas",
-    "events": {
-      "onhover": {
-        "enable": false,
-        "mode": "repulse"
-      },
-      "onclick": {
-        "enable": false,
-        "mode": "push"
-      },
-      "resize": true
-    },
-    "modes": {
-      "repulse": {
-        "distance": 100,
-        "duration": 0.4
-      }
+
+    let dx = nearestParticle.x - head.x;
+    let dy = nearestParticle.y - head.y;
+
+    if (Math.abs(dx) > Math.abs(dy)) {
+      this.direction = {x: dx > 0 ? 1 : -1, y: 0};
+    } else {
+      this.direction = {x: 0, y: dy > 0 ? 1 : -1};
     }
-  },
-  "retina_detect": true
-});
+  }
+}
+
+// Initialize canvas and worm
+let canvas = document.createElement('canvas');
+canvas.style.position = 'absolute';
+canvas.style.top = '0';
+canvas.style.left = '0';
+canvas.style.zIndex = '10'; // Ensure the canvas is on top
+document.body.appendChild(canvas);
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+let ctx = canvas.getContext('2d');
+
+let worm = new Worm();
+
+// Main animation loop
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Update and draw particles
+  pJS.fn.particlesDraw();
+
+  // Update and draw worm
+  worm.update();
+  worm.draw(ctx);
+
+  // Move worm towards nearest particle
+  worm.moveToNearestParticle(pJS.particles.array);
+
+  // Check for collisions with particles
+  let particlesArray = pJS.particles.array;
+  for (let i = particlesArray.length - 1; i >= 0; i--) {
+    let particle = particlesArray[i];
+    let dx = worm.segments[0].x - particle.x;
+    let dy = worm.segments[0].y - particle.y;
+    let dist = Math.sqrt(dx * dx + dy * dy);
+
+    if (dist < 10) { // Collision detected
+      particlesArray.splice(i, 1); // Remove particle
+      worm.grow(); // Grow worm
+    }
+  }
+
+  requestAnimationFrame(animate);
+}
+
+// Start the animation
+animate();
