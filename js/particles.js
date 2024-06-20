@@ -671,7 +671,7 @@ var pJS = function(tag_id, params){
   };
 
 
- /* ---------- pJS functions - particles interaction ------------ */
+/* ---------- pJS functions - particles interaction ------------ */
 
 pJS.fn.interact.linkParticles = function(p1, p2) {
 
@@ -698,11 +698,12 @@ pJS.fn.interact.linkParticles = function(p1, p2) {
       pJS.canvas.ctx.lineWidth = thickness;
       //pJS.canvas.ctx.lineCap = 'round'; /* performance issue */
 
-      /* Dynamic control points for cubic Bezier curve */
-      var cp1x = p1.x + (dx / 3) + (Math.random() - 0.5) * 20;
-      var cp1y = p1.y + (dy / 3) + (Math.random() - 0.5) * 20;
-      var cp2x = p1.x + (2 * dx / 3) + (Math.random() - 0.5) * 20;
-      var cp2y = p1.y + (2 * dy / 3) + (Math.random() - 0.5) * 20;
+      /* More controlled randomness for control points */
+      var controlOffset = 0.2 * dist; // Use a fraction of the distance for control point randomness
+      var cp1x = p1.x + (dx / 3) + (Math.random() - 0.5) * controlOffset;
+      var cp1y = p1.y + (dy / 3) + (Math.random() - 0.5) * controlOffset;
+      var cp2x = p1.x + (2 * dx / 3) + (Math.random() - 0.5) * controlOffset;
+      var cp2y = p1.y + (2 * dy / 3) + (Math.random() - 0.5) * controlOffset;
 
       /* path */
       pJS.canvas.ctx.beginPath();
@@ -713,6 +714,7 @@ pJS.fn.interact.linkParticles = function(p1, p2) {
     }
   }
 };
+
 
 
 
