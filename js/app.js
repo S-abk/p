@@ -2,7 +2,7 @@
 particlesJS("particles-js", {
     "particles": {
       "number": {
-        "value": 80, // Adjusted number for visibility
+        "value": 20, // Adjusted number for visibility
         "density": {
           "enable": true, // Enable density to control particle spread
           "value_area": 800 // Area over which particles are spread
@@ -43,7 +43,7 @@ particlesJS("particles-js", {
       },
       "line_linked": {
         "enable": true, // Enable lines between particles
-        "distance": 200, // Maximum distance for lines to be drawn
+        "distance": 800, // Maximum distance for lines to be drawn
         "color": "#FFD700", // Color of lines (warm golden)
         "opacity": 0.4, // Opacity of lines
         "width": 2 // Width of lines
