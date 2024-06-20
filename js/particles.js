@@ -689,31 +689,40 @@ pJS.fn.interact.linkParticles = function(p1, p2) {
       /* Calculate angle */
       var angle = Math.atan2(dy, dx);
 
-      /* Calculate thickness based on angle */
-      var thickness = Math.abs(Math.cos(angle)) * pJS.particles.line_linked.width;
+      /* Calculate thickness based on distance */
+      var thickness = (1 - (dist / pJS.particles.line_linked.distance)) * pJS.particles.line_linked.width;
 
-      /* style */
+      /* Gradient color */
       var color_line = pJS.particles.line_linked.color_rgb_line;
-      pJS.canvas.ctx.strokeStyle = 'rgba(' + color_line.r + ',' + color_line.g + ',' + color_line.b + ',' + opacity_line + ')';
+      var gradient = pJS.canvas.ctx.createLinearGradient(p1.x, p1.y, p2.x, p2.y);
+      gradient.addColorStop(0, `rgba(${color_line.r},${color_line.g},${color_line.b},${opacity_line})`);
+      gradient.addColorStop(1, `rgba(${color_line.b},${color_line.r},${color_line.g},${opacity_line})`);
+
+      pJS.canvas.ctx.strokeStyle = gradient;
       pJS.canvas.ctx.lineWidth = thickness;
-      //pJS.canvas.ctx.lineCap = 'round'; /* performance issue */
 
-      /* More controlled randomness for control points */
-      var controlOffset = 0.2 * dist; // Use a fraction of the distance for control point randomness
-      var cp1x = p1.x + (dx / 3) + (Math.random() - 0.5) * controlOffset;
-      var cp1y = p1.y + (dy / 3) + (Math.random() - 0.5) * controlOffset;
-      var cp2x = p1.x + (2 * dx / 3) + (Math.random() - 0.5) * controlOffset;
-      var cp2y = p1.y + (2 * dy / 3) + (Math.random() - 0.5) * controlOffset;
+      /* Sinusoidal line path */
+      var steps = 10;
+      var stepX = dx / steps;
+      var stepY = dy / steps;
+      var amplitude = 5;  // Adjust for the desired wave amplitude
 
-      /* path */
       pJS.canvas.ctx.beginPath();
       pJS.canvas.ctx.moveTo(p1.x, p1.y);
-      pJS.canvas.ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, p2.x, p2.y);
+
+      for (var i = 1; i < steps; i++) {
+        var x = p1.x + stepX * i;
+        var y = p1.y + stepY * i + Math.sin((i / steps) * Math.PI * 2) * amplitude;
+        pJS.canvas.ctx.lineTo(x, y);
+      }
+
+      pJS.canvas.ctx.lineTo(p2.x, p2.y);
       pJS.canvas.ctx.stroke();
       pJS.canvas.ctx.closePath();
     }
   }
 };
+
 
 
 
