@@ -97,9 +97,9 @@ class Snake {
 
   // Draw snake
   draw(ctx) {
-    ctx.fillStyle = 'red'; // Change the snake color here
+    ctx.fillStyle = 'white'; // Change the snake color to white for visibility
     for (let segment of this.segments) {
-      ctx.fillRect(segment.x, segment.y, 10, 10);
+      ctx.fillRect(segment.x, segment.y, 20, 20); // Increase the size of the snake segments
     }
   }
 
@@ -143,6 +143,9 @@ class Snake {
 
 // Initialize canvas and snake
 let canvas = document.createElement('canvas');
+canvas.style.position = 'absolute';
+canvas.style.top = '0';
+canvas.style.left = '0';
 document.body.appendChild(canvas);
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
