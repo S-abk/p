@@ -9,7 +9,7 @@ particlesJS("particles-js", {
         }
       },
       "color": {
-        "value": "#FFA500" // Single warm color for simplicity
+        "value": "#FF0000" // Single warm color for simplicity (red)
       },
       "shape": {
         "type": "circle", // Include polygon shapes
@@ -44,7 +44,7 @@ particlesJS("particles-js", {
       "line_linked": {
         "enable": true, // Enable lines between particles
         "distance": 200, // Maximum distance for lines to be drawn
-        "color": "#FFD700", // Color of lines (warm golden)
+        "color": "#FF0000", // Color of lines (red)
         "opacity": 0.4, // Opacity of lines
         "width": 2 // Width of lines
       },
