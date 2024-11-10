@@ -5,7 +5,8 @@ body {
   margin: 0;
   font: normal 75% Arial, Helvetica, sans-serif;
   background-color: #0d0d0d; /* Dark background for less eye strain */
-  color: #FFA500; /* Warm amber text color */
+  /*color: #FFA500; Warm amber text color */
+  color: #FF0000; /* red */
 }
 
 /* Ensure canvas takes full width and height of the screen */
