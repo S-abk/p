@@ -1,45 +1,43 @@
+import multiprocessing
 import numpy as np
-import matplotlib.pyplot as plt
 from PIL import Image
 
-# Define image size and domain boundaries
-WIDTH, HEIGHT = 800, 600
-x_min, x_max = -2.0, 1.0
-y_min, y_max = -1.5, 1.5
+def mandelbrot(h, w, max_iter):
+    y, x = np.ogrid[-1.4:1.4:h*1j, -2:0.8:w*1j]
+    c = x + y*1j
+    z = c
+    divtime = max_iter + np.zeros(z.shape, dtype=int)
+    
+    for i in range(max_iter):
+        z = z**2 + c
+        diverge = z*np.conj(z) > 2**2
+        div_now = diverge & (divtime == max_iter)
+        divtime[div_now] = i
+        z[diverge] = 2
+    
+    return divtime
 
-# Maximum number of iterations for each point
-max_iterations = 100
+def compute_chunk(args):
+    y_start, y_end, width, max_iter = args
+    return mandelbrot(y_end - y_start, width, max_iter)
 
-def mandelbrot(c, max_iterations):
-    z = 0
-    for n in range(max_iterations):
-        if abs(z) > 2:
-            return n
-        z = z*z + c
-    return max_iterations
+def parallel_mandelbrot(height, width, max_iter, num_processes):
+    chunk_size = height // num_processes
+    pool = multiprocessing.Pool(processes=num_processes)
+    
+    chunks = [(i*chunk_size, (i+1)*chunk_size, width, max_iter) 
+              for i in range(num_processes)]
+    
+    results = pool.map(compute_chunk, chunks)
+    return np.vstack(results)
 
-# Create an array to store pixel data
-image = Image.new('RGB', (WIDTH, HEIGHT))
-pixels = image.load()
+# Usage
+height, width = 1000, 1500
+max_iter = 1000
+num_processes = multiprocessing.cpu_count()
 
-# Generate Mandelbrot set image
-for x in range(WIDTH):
-    for y in range(HEIGHT):
-        # Convert pixel coordinate to complex number
-        c = complex(x_min + (x / WIDTH) * (x_max - x_min),
-                    y_min + (y / HEIGHT) * (y_max - y_min))
-        
-        # Compute color based on iteration count
-        m = mandelbrot(c, max_iterations)
-        hue = int(255 * m / max_iterations)
-        saturation = 255
-        value = 255 if m < max_iterations else 0
-        
-        # Convert HSV to RGB and assign to pixel
-        pixels[x, y] = tuple(int(i) for i in plt.cm.hsv(hue/255)[:3])
+result = parallel_mandelbrot(height, width, max_iter, num_processes)
 
-# Display the image using matplotlib
-plt.imshow(image)
-plt.title("Mandelbrot Set")
-plt.axis('off')  # Turn off axis labels
-plt.show()
+# Convert to image and save
+img = Image.fromarray(np.uint8(result * 255 / np.max(result)))
+img.save('mandelbrot_parallel.png')
