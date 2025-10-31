@@ -1,23 +1,95 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nighttime Particle Background</title>
-  <link rel="stylesheet" href="css/style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Digital Clock</title>
+  <style>
+    :root {
+      --bg: #000000;
+      --fg: #00ff55;            /* classic LED green */
+      --glow: #00ff55;
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: var(--bg);
+      color: var(--fg);
+    }
+
+    body {
+      display: grid;
+      place-items: center;
+      user-select: none;
+      cursor: none; /* hides the cursor for a clean fullscreen look */
+    }
+
+    #clock {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-weight: 700;
+      /* scales to fill screen nicely on phones & desktops */
+      font-size: clamp(4rem, 18vw, 20rem);
+      letter-spacing: 0.06em;
+      line-height: 1;
+      text-shadow:
+        0 0 0.2em var(--glow),
+        0 0 0.6em var(--glow),
+        0 0 1.2em var(--glow);
+    }
+
+    .colon {
+      display: inline-block;
+      width: 0.6em;             /* makes blink look balanced */
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
-  <!-- particles.js container -->
-  <div id="particles-js"></div>
+  <div id="clock" aria-label="Digital clock">00<span class="colon">:</span>00<span class="colon">:</span>00</div>
 
-  <!-- Background music -->
-  <audio id="background-music" src="audio/background-music.mp3" autoplay loop></audio>
+  <script>
+    const clock = document.getElementById('clock');
 
-  <!-- particles.js library -->
-  <script src="js/particles.js"></script>
-  <!-- Custom app.js script -->
-  <script src="js/app.js"></script>
+    // Format helper
+    const pad2 = n => n.toString().padStart(2, '0');
+
+    // Update time ~60fps so colon can blink smoothly at 1 Hz
+    function tick() {
+      const now = new Date();
+      const h = pad2(now.getHours());
+      const m = pad2(now.getMinutes());
+      const s = pad2(now.getSeconds());
+
+      // Render only when the visible string changes (saves a little work)
+      const text = `${h}<span class="colon">:</span>${m}<span class="colon">:</span>${s}`;
+      if (clock._last !== text) {
+        clock.innerHTML = text;
+        clock._last = text;
+        clock._colons = clock.querySelectorAll('.colon');
+      }
+
+      // Blink colons: visible for first half of each second
+      const on = now.getMilliseconds() < 500;
+      if (clock._colons) {
+        for (const c of clock._colons) c.style.opacity = on ? '1' : '0.1';
+      }
+
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    // Double-click to toggle fullscreen (browsers require a user gesture)
+    document.addEventListener('dblclick', () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen?.().catch(() => {});
+      } else {
+        document.exitFullscreen?.();
+      }
+    });
+
+    // Keep font size responsive if user rotates/resizes
+    addEventListener('resize', () => {}); // no-op; CSS handles scaling
+  </script>
 </body>
 </html>
-
-<!-- particles.js lib (JavaScript CodePen settings): https://github.com/VincentGarreau/particles.js -->
