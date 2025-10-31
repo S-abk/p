@@ -6,9 +6,9 @@
   <title>Digital Clock</title>
   <style>
     :root {
-      --bg: #000000;
-      --fg: #00ff55;            /* classic LED green */
-      --glow: #00ff55;
+      --bg: #000;
+      --fg: #00ff55; /* default day color */
+      --glow: var(--fg);
     }
 
     html, body {
@@ -22,13 +22,12 @@
       display: grid;
       place-items: center;
       user-select: none;
-      cursor: none; /* hides the cursor for a clean fullscreen look */
+      cursor: none;
     }
 
     #clock {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-family: monospace;
       font-weight: 700;
-      /* scales to fill screen nicely on phones & desktops */
       font-size: clamp(4rem, 18vw, 20rem);
       letter-spacing: 0.06em;
       line-height: 1;
@@ -36,60 +35,54 @@
         0 0 0.2em var(--glow),
         0 0 0.6em var(--glow),
         0 0 1.2em var(--glow);
+      transition: color 1s, text-shadow 1s;
     }
 
     .colon {
       display: inline-block;
-      width: 0.6em;             /* makes blink look balanced */
+      width: 0.6em;
       text-align: center;
     }
   </style>
 </head>
 <body>
-  <div id="clock" aria-label="Digital clock">00<span class="colon">:</span>00<span class="colon">:</span>00</div>
+  <div id="clock">00<span class="colon">:</span>00<span class="colon">:</span>00</div>
 
   <script>
     const clock = document.getElementById('clock');
 
-    // Format helper
-    const pad2 = n => n.toString().padStart(2, '0');
+    function pad2(n) { return n.toString().padStart(2, '0'); }
 
-    // Update time ~60fps so colon can blink smoothly at 1 Hz
+    function updateColor() {
+      const hour = new Date().getHours();
+      const isNight = (hour >= 19 || hour < 7); // 7 PM–7 AM
+      const fg = isNight ? '#ff3333' : '#00ff55'; // red at night, green day
+      document.documentElement.style.setProperty('--fg', fg);
+      document.documentElement.style.setProperty('--glow', fg);
+    }
+
     function tick() {
       const now = new Date();
       const h = pad2(now.getHours());
       const m = pad2(now.getMinutes());
       const s = pad2(now.getSeconds());
+      clock.innerHTML = `${h}<span class="colon">:</span>${m}<span class="colon">:</span>${s}`;
 
-      // Render only when the visible string changes (saves a little work)
-      const text = `${h}<span class="colon">:</span>${m}<span class="colon">:</span>${s}`;
-      if (clock._last !== text) {
-        clock.innerHTML = text;
-        clock._last = text;
-        clock._colons = clock.querySelectorAll('.colon');
-      }
-
-      // Blink colons: visible for first half of each second
+      // Blink colons
       const on = now.getMilliseconds() < 500;
-      if (clock._colons) {
-        for (const c of clock._colons) c.style.opacity = on ? '1' : '0.1';
+      for (const c of document.querySelectorAll('.colon')) {
+        c.style.opacity = on ? '1' : '0.1';
       }
 
+      updateColor();
       requestAnimationFrame(tick);
     }
     requestAnimationFrame(tick);
 
-    // Double-click to toggle fullscreen (browsers require a user gesture)
     document.addEventListener('dblclick', () => {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen?.().catch(() => {});
-      } else {
-        document.exitFullscreen?.();
-      }
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+      else document.exitFullscreen();
     });
-
-    // Keep font size responsive if user rotates/resizes
-    addEventListener('resize', () => {}); // no-op; CSS handles scaling
   </script>
 </body>
 </html>
