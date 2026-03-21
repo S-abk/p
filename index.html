@@ -1,88 +1,494 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Digital Clock</title>
-  <style>
-    :root {
-      --bg: #000;
-      --fg: #00ff55; /* default day color */
-      --glow: var(--fg);
-    }
-
-    html, body {
-      height: 100%;
-      margin: 0;
-      background: var(--bg);
-      color: var(--fg);
-    }
-
-    body {
-      display: grid;
-      place-items: center;
-      user-select: none;
-      cursor: none;
-    }
-
-    #clock {
-      font-family: monospace;
-      font-weight: 700;
-      font-size: clamp(4rem, 18vw, 20rem);
-      letter-spacing: 0.06em;
-      line-height: 1;
-      text-shadow:
-        0 0 0.2em var(--glow),
-        0 0 0.6em var(--glow),
-        0 0 1.2em var(--glow);
-      transition: color 1s, text-shadow 1s;
-    }
-
-    .colon {
-      display: inline-block;
-      width: 0.6em;
-      text-align: center;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lava Lamp Dashboard</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #050508;
+    overflow: hidden;
+    cursor: default;
+  }
+  canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: block;
+  }
+  .vignette {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.6) 100%);
+    z-index: 1;
+  }
+  #toast {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255,255,255,0.6);
+    font-family: system-ui, sans-serif;
+    font-size: 14px;
+    padding: 8px 20px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 20px;
+    backdrop-filter: blur(8px);
+    z-index: 3;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  #toast.visible { opacity: 1; }
+  #help {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: rgba(255,255,255,0.7);
+    font-family: system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 2;
+    padding: 24px 36px;
+    background: rgba(0,0,0,0.7);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    backdrop-filter: blur(12px);
+    z-index: 4;
+    display: none;
+  }
+  #help.visible { display: block; }
+  #help kbd {
+    display: inline-block;
+    background: rgba(255,255,255,0.12);
+    border-radius: 4px;
+    padding: 1px 8px;
+    font-family: system-ui, sans-serif;
+    font-size: 13px;
+    margin-right: 8px;
+    min-width: 28px;
+    text-align: center;
+  }
+</style>
 </head>
 <body>
-  <div id="clock">00<span class="colon">:</span>00<span class="colon">:</span>00</div>
+  <canvas id="lava"></canvas>
+  <div class="vignette" id="vignette"></div>
+  <div id="toast"></div>
+  <div id="help">
+    <div><kbd>F</kbd> Toggle fullscreen</div>
+    <div><kbd>C</kbd> Cycle color theme</div>
+    <div><kbd>D</kbd> Toggle color drift</div>
+    <div><kbd>?</kbd> Show / hide controls</div>
+    <div><kbd>Click</kbd> Spawn a blob</div>
+    <div><kbd>2xClick</kbd> Toggle fullscreen</div>
+  </div>
 
-  <script>
-    const clock = document.getElementById('clock');
+<script>
+const canvas = document.getElementById('lava');
+const ctx = canvas.getContext('2d');
+const vignetteEl = document.getElementById('vignette');
 
-    function pad2(n) { return n.toString().padStart(2, '0'); }
+// Offscreen canvas for smooth upscaling
+const offscreen = document.createElement('canvas');
+const offCtx = offscreen.getContext('2d');
 
-    function updateColor() {
-      const hour = new Date().getHours();
-      const isNight = (hour >= 19 || hour < 7); // 7 PM–7 AM
-      const fg = isNight ? '#ff3333' : '#00ff55'; // red at night, green day
-      document.documentElement.style.setProperty('--fg', fg);
-      document.documentElement.style.setProperty('--glow', fg);
+// --- Resize ---
+let renderW, renderH;
+const RENDER_SCALE = 4; // render at 1/4 res, upscale smoothly
+
+function resize() {
+  canvas.width = window.innerWidth * devicePixelRatio;
+  canvas.height = window.innerHeight * devicePixelRatio;
+  renderW = Math.ceil(canvas.width / RENDER_SCALE);
+  renderH = Math.ceil(canvas.height / RENDER_SCALE);
+  offscreen.width = renderW;
+  offscreen.height = renderH;
+}
+resize();
+window.addEventListener('resize', resize);
+
+// --- Endianness detection (once) ---
+const isLittleEndian = (() => {
+  const b = new ArrayBuffer(4);
+  new Uint8Array(b)[0] = 0x0a;
+  return new Uint32Array(b)[0] === 0x0a;
+})();
+
+function packRGBA(r, g, b, a) {
+  if (isLittleEndian) return (a << 24) | (b << 16) | (g << 8) | r;
+  return (r << 24) | (g << 16) | (b << 8) | a;
+}
+
+// --- Toast system ---
+const toastEl = document.getElementById('toast');
+let toastTimer = null;
+function showToast(text, duration = 2000) {
+  toastEl.textContent = text;
+  toastEl.classList.add('visible');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toastEl.classList.remove('visible'), duration);
+}
+
+// --- Help overlay ---
+const helpEl = document.getElementById('help');
+let helpVisible = false;
+function toggleHelp() {
+  helpVisible = !helpVisible;
+  helpEl.classList.toggle('visible', helpVisible);
+}
+
+// --- Fullscreen ---
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(() => {});
+  } else {
+    document.exitFullscreen();
+  }
+}
+
+let clickTimer = null;
+window.addEventListener('dblclick', (e) => {
+  clearTimeout(clickTimer);
+  clickTimer = null;
+  toggleFullscreen();
+});
+canvas.addEventListener('click', (e) => {
+  if (clickTimer !== null) return;
+  clickTimer = setTimeout(() => {
+    spawnBlob(e.clientX / window.innerWidth, e.clientY / window.innerHeight);
+    clickTimer = null;
+  }, 250);
+});
+
+// --- Color palettes ---
+const palettes = [
+  {
+    name: 'Warm',
+    bg: [5, 5, 8],
+    vignette: 'rgba(0,0,0,0.6)',
+    color(strength, colorMul) {
+      return [
+        Math.min(255, (160 + strength * 95) * colorMul + (1 - colorMul) * 60 | 0),
+        Math.min(255, (30 + strength * 80) * colorMul | 0),
+        Math.min(255, (8 + strength * 25) * colorMul | 0),
+      ];
     }
-
-    function tick() {
-      const now = new Date();
-      const h = pad2(now.getHours());
-      const m = pad2(now.getMinutes());
-      const s = pad2(now.getSeconds());
-      clock.innerHTML = `${h}<span class="colon">:</span>${m}<span class="colon">:</span>${s}`;
-
-      // Blink colons
-      const on = now.getMilliseconds() < 500;
-      for (const c of document.querySelectorAll('.colon')) {
-        c.style.opacity = on ? '1' : '0.1';
-      }
-
-      updateColor();
-      requestAnimationFrame(tick);
+  },
+  {
+    name: 'Ocean',
+    bg: [3, 6, 15],
+    vignette: 'rgba(0,0,10,0.6)',
+    color(strength, colorMul) {
+      return [
+        Math.min(255, (10 + strength * 30) * colorMul | 0),
+        Math.min(255, (100 + strength * 100) * colorMul + (1 - colorMul) * 30 | 0),
+        Math.min(255, (140 + strength * 115) * colorMul + (1 - colorMul) * 50 | 0),
+      ];
     }
-    requestAnimationFrame(tick);
+  },
+  {
+    name: 'Ember',
+    bg: [6, 2, 2],
+    vignette: 'rgba(5,0,0,0.7)',
+    color(strength, colorMul) {
+      return [
+        Math.min(255, (100 + strength * 60) * colorMul + (1 - colorMul) * 30 | 0),
+        Math.min(255, (8 + strength * 20) * colorMul | 0),
+        Math.min(255, (3 + strength * 8) * colorMul | 0),
+      ];
+    }
+  },
+  {
+    name: 'Mono',
+    bg: [4, 4, 4],
+    vignette: 'rgba(0,0,0,0.6)',
+    color(strength, colorMul) {
+      const v = Math.min(255, (120 + strength * 135) * colorMul + (1 - colorMul) * 40 | 0);
+      return [v, v, v];
+    }
+  },
+];
 
-    document.addEventListener('dblclick', () => {
-      if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-      else document.exitFullscreen();
+let paletteIndex = 0;
+let currentPalette = palettes[0];
+
+function cyclePalette() {
+  paletteIndex = (paletteIndex + 1) % palettes.length;
+  currentPalette = palettes[paletteIndex];
+  document.body.style.background = `rgb(${currentPalette.bg.join(',')})`;
+  vignetteEl.style.background = `radial-gradient(ellipse at center, transparent 40%, ${currentPalette.vignette} 100%)`;
+  showToast(`Theme: ${currentPalette.name}`);
+}
+
+// --- Color drift ---
+let driftEnabled = false;
+let hueShift = 0;
+
+function toggleDrift() {
+  driftEnabled = !driftEnabled;
+  showToast(`Color drift: ${driftEnabled ? 'ON' : 'OFF'}`);
+}
+
+function rotateHue(r, g, b, angle) {
+  const cos = Math.cos(angle);
+  const sin = Math.sin(angle);
+  return [
+    Math.max(0, Math.min(255, r * (0.213 + 0.787 * cos - 0.213 * sin) + g * (0.715 - 0.715 * cos - 0.715 * sin) + b * (0.072 - 0.072 * cos + 0.928 * sin) + 0.5 | 0)),
+    Math.max(0, Math.min(255, r * (0.213 - 0.213 * cos + 0.143 * sin) + g * (0.715 + 0.285 * cos + 0.140 * sin) + b * (0.072 - 0.072 * cos - 0.283 * sin) + 0.5 | 0)),
+    Math.max(0, Math.min(255, r * (0.213 - 0.213 * cos - 0.787 * sin) + g * (0.715 - 0.715 * cos + 0.715 * sin) + b * (0.072 + 0.928 * cos + 0.072 * sin) + 0.5 | 0)),
+  ];
+}
+
+// --- Key bindings ---
+window.addEventListener('keydown', (e) => {
+  switch (e.key) {
+    case 'f': case 'F': toggleFullscreen(); break;
+    case 'c': case 'C': cyclePalette(); break;
+    case 'd': case 'D': toggleDrift(); break;
+    case '?': toggleHelp(); break;
+  }
+});
+
+// --- Layer definitions ---
+// More blobs, larger radii so they merge organically
+const layers = [
+  { blobs: [], count: 8,  opacity: 0.3,  colorMul: 0.5, speedMul: 0.35, rMin: 0.10, rMax: 0.20 },
+  { blobs: [], count: 8,  opacity: 0.6,  colorMul: 0.75, speedMul: 0.65, rMin: 0.07, rMax: 0.14 },
+  { blobs: [], count: 6,  opacity: 1.0,  colorMul: 1.0, speedMul: 1.0,  rMin: 0.06, rMax: 0.12 },
+];
+
+for (const layer of layers) {
+  for (let i = 0; i < layer.count; i++) {
+    const direction = Math.random() < 0.5 ? -1 : 1;
+    layer.blobs.push({
+      x: 0.05 + Math.random() * 0.9,
+      y: Math.random(),
+      r: layer.rMin + Math.random() * (layer.rMax - layer.rMin),
+      vy: direction * (0.0002 + Math.random() * 0.0005) * layer.speedMul,
+      phase: Math.random() * Math.PI * 2,
+      freq: 0.15 + Math.random() * 0.35,
+      spawned: false,
     });
-  </script>
+  }
+}
+
+// --- Spawn blobs on click ---
+const MAX_SPAWNED = 10;
+function spawnBlob(nx, ny) {
+  const frontLayer = layers[2];
+  const spawnedCount = frontLayer.blobs.filter(b => b.spawned).length;
+  if (spawnedCount >= MAX_SPAWNED) {
+    const oldest = frontLayer.blobs.find(b => b.spawned);
+    if (oldest) frontLayer.blobs.splice(frontLayer.blobs.indexOf(oldest), 1);
+  }
+  const direction = Math.random() < 0.5 ? -1 : 1;
+  frontLayer.blobs.push({
+    x: nx,
+    y: ny,
+    r: 0.04 + Math.random() * 0.05,
+    vy: direction * (0.0003 + Math.random() * 0.0005),
+    phase: Math.random() * Math.PI * 2,
+    freq: 0.3 + Math.random() * 0.3,
+    spawned: true,
+    birth: performance.now(),
+    lifespan: 8000,
+  });
+}
+
+// --- Animate ---
+let lastTime = 0;
+
+function animate(time) {
+  const dt = time - lastTime;
+  lastTime = time;
+  const t = time * 0.001;
+
+  if (driftEnabled) {
+    hueShift += 0.0001 * dt;
+    if (hueShift > Math.PI * 2) hueShift -= Math.PI * 2;
+  }
+
+  // Render at reduced resolution
+  const w = renderW;
+  const h = renderH;
+
+  const imgData = offCtx.createImageData(w, h);
+  const buf = new ArrayBuffer(imgData.data.length);
+  const u8 = new Uint8ClampedArray(buf);
+  const u32 = new Uint32Array(buf);
+
+  const bg = currentPalette.bg;
+  let bgR = bg[0], bgG = bg[1], bgB = bg[2];
+  if (driftEnabled) {
+    [bgR, bgG, bgB] = rotateHue(bgR, bgG, bgB, hueShift * 0.3);
+  }
+  const bgPacked = packRGBA(bgR, bgG, bgB, 255);
+  u32.fill(bgPacked);
+
+  // Render each layer
+  for (let li = 0; li < layers.length; li++) {
+    const layer = layers[li];
+    const { blobs, opacity, colorMul, speedMul } = layer;
+
+    // Remove expired spawned blobs
+    for (let i = blobs.length - 1; i >= 0; i--) {
+      if (blobs[i].spawned && time - blobs[i].birth > blobs[i].lifespan) {
+        blobs.splice(i, 1);
+      }
+    }
+
+    // Update positions
+    for (const b of blobs) {
+      b.x += Math.sin(t * b.freq * speedMul + b.phase) * 0.0006;
+      b.y += b.vy + Math.sin(t * b.freq * 0.4 * speedMul + b.phase) * 0.0002;
+
+      if (b.y < -b.r * 2) {
+        b.y = 1 + b.r;
+        b.x = 0.1 + Math.random() * 0.8;
+      }
+      if (b.y > 1 + b.r * 2) {
+        b.y = -b.r;
+        b.x = 0.1 + Math.random() * 0.8;
+      }
+      if (b.x < 0.03) b.x = 0.03;
+      if (b.x > 0.97) b.x = 0.97;
+    }
+
+    // Pre-compute pixel positions at render resolution
+    const minDim = Math.min(w, h);
+    const numBlobs = blobs.length;
+    const bpx = new Float64Array(numBlobs);
+    const bpy = new Float64Array(numBlobs);
+    const br2 = new Float64Array(numBlobs);
+    const brs = new Float64Array(numBlobs);
+    const bop = new Float64Array(numBlobs);
+
+    for (let i = 0; i < numBlobs; i++) {
+      const b = blobs[i];
+      bpx[i] = b.x * w;
+      bpy[i] = b.y * h;
+      const rPx = b.r * minDim;
+      br2[i] = rPx * rPx;
+      brs[i] = rPx;
+      bop[i] = 1;
+      if (b.spawned) {
+        const age = time - b.birth;
+        const fadeStart = b.lifespan - 3000;
+        if (age > fadeStart) bop[i] = Math.max(0, 1 - (age - fadeStart) / 3000);
+      }
+    }
+
+    // Lower threshold for more merging (0.6 instead of 1.0)
+    const threshold = 0.6;
+
+    for (let sy = 0; sy < h; sy++) {
+      for (let sx = 0; sx < w; sx++) {
+
+        let sum = 0;
+        // Weighted center for smooth 3D shading (no hard dominant-blob switch)
+        let wcx = 0, wcy = 0, wtotal = 0;
+
+        for (let bi = 0; bi < numBlobs; bi++) {
+          const dx = sx - bpx[bi];
+          const dy = sy - bpy[bi];
+          const contrib = (br2[bi] / (dx * dx + dy * dy + 1)) * bop[bi];
+          sum += contrib;
+          // Weight centers by contribution for smooth blending
+          wcx += bpx[bi] * contrib;
+          wcy += bpy[bi] * contrib;
+          wtotal += contrib;
+        }
+
+        if (sum > threshold) {
+          const strength = Math.min(1, (sum - threshold) * 1.2);
+          let [cr, cg, cb] = currentPalette.color(strength, colorMul);
+
+          // 3D shading using weighted average center (smooth, no seams)
+          if (wtotal > 0) {
+            const cx = wcx / wtotal;
+            const cy = wcy / wtotal;
+            // Use weighted average blob radius for normalization
+            let wRadius = 0;
+            for (let bi = 0; bi < numBlobs; bi++) {
+              const dx = sx - bpx[bi];
+              const dy = sy - bpy[bi];
+              const contrib = (br2[bi] / (dx * dx + dy * dy + 1)) * bop[bi];
+              wRadius += brs[bi] * contrib;
+            }
+            wRadius /= wtotal;
+            const lx = (sx - cx) / (wRadius + 1);
+            const ly = (sy - cy) / (wRadius + 1);
+
+            // Light from upper-left — gentle range
+            let light = -0.3 * lx - 0.45 * ly;
+            light = light < -0.4 ? -0.4 : light > 0.5 ? 0.5 : light;
+
+            // Subtle shade: range 0.84 to 1.15
+            const shade = 1.0 + light * 0.3;
+            cr = Math.min(255, cr * shade | 0);
+            cg = Math.min(255, cg * shade | 0);
+            cb = Math.min(255, cb * shade | 0);
+
+            // Warm specular — tinted, not white, and subtle
+            if (light > 0.3) {
+              const spec = (light - 0.3) * 2.0; // 0 to 0.4
+              cr = Math.min(255, cr + (spec * 50 | 0));
+              cg = Math.min(255, cg + (spec * 25 | 0));
+              cb = Math.min(255, cb + (spec * 8 | 0));
+            }
+          }
+
+          if (driftEnabled) {
+            [cr, cg, cb] = rotateHue(cr, cg, cb, hueShift);
+          }
+
+          const alpha = Math.min(255, strength * opacity * 320 | 0);
+          const srcA = alpha / 255;
+          const invA = 1 - srcA;
+
+          const idx = sy * w + sx;
+          const existing = u32[idx];
+          // Inline unpack
+          let er, eg, eb;
+          if (isLittleEndian) {
+            er = existing & 0xFF;
+            eg = (existing >> 8) & 0xFF;
+            eb = (existing >> 16) & 0xFF;
+          } else {
+            er = (existing >> 24) & 0xFF;
+            eg = (existing >> 16) & 0xFF;
+            eb = (existing >> 8) & 0xFF;
+          }
+          u32[idx] = packRGBA(
+            Math.min(255, cr * srcA + er * invA | 0),
+            Math.min(255, cg * srcA + eg * invA | 0),
+            Math.min(255, cb * srcA + eb * invA | 0),
+            255
+          );
+        }
+      }
+    }
+  }
+
+  // Write to offscreen, then upscale smoothly to main canvas
+  imgData.data.set(u8);
+  offCtx.putImageData(imgData, 0, 0);
+
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(offscreen, 0, 0, canvas.width, canvas.height);
+
+  requestAnimationFrame(animate);
+}
+
+showToast('F fullscreen \u00b7 C theme \u00b7 D drift \u00b7 ? help', 4000);
+requestAnimationFrame(animate);
+</script>
 </body>
 </html>
